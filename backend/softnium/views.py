@@ -210,6 +210,39 @@ class ClientDetailAPIView(APIView):
             status=status.HTTP_204_NO_CONTENT
         )
 
+class ClientProfileAPIView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+
+        gym = Gym.objects.get(user=request.user)
+
+        client = get_object_or_404(
+            Client,
+            pk=pk,
+            gym=gym
+        )
+
+        client_serializer = ClientSerializer(client)
+
+        payments = Payment.objects.filter(
+            client=client
+        ).order_by("-payment_date")
+
+        payment_serializer = PaymentSerializer(
+            payments,
+            many=True
+        )
+
+        return Response({
+
+            "client": client_serializer.data,
+
+            "payments": payment_serializer.data
+
+        })
+
 class PaymentAPIView(APIView):
 
     permission_classes = [IsAuthenticated]

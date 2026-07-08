@@ -46,9 +46,13 @@ class ClientSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
+    client_name=serializers.CharField(
+        source="client.full_name",
+        read_only=True
+    )
     class Meta:
         model = Payment
-        fields = '__all__'
+        fields = "__all__"
     
     def validate_amount(self, value):
         if value <= 0:

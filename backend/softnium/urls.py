@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterAPIView, LoginAPIView, DashboardAPIView, ClientAPIView, ClientDetailAPIView, PaymentAPIView, PaymentDetailAPIView
+from .views import RegisterAPIView, LoginAPIView, DashboardAPIView, ClientAPIView, ClientDetailAPIView, PaymentAPIView, PaymentDetailAPIView, ClientProfileAPIView
 
 urlpatterns = [
     path('register/', RegisterAPIView.as_view(), name='register'),
@@ -9,4 +9,5 @@ urlpatterns = [
     path('clients/<int:pk>/', ClientDetailAPIView.as_view(), name='client-detail'),
     path('payments/', PaymentAPIView.as_view(), name='payments'),
     path('payments/<int:pk>/', PaymentDetailAPIView.as_view(), name='payment-detail'),
+    path('clients/<int:pk>/profile/', ClientProfileAPIView.as_view(), name='client-profile'),
 ]
