@@ -19,6 +19,7 @@ from django.db.models import Sum
 from django.utils import timezone
 
 from django.db.models import Q
+from rest_framework_simplejwt.views import TokenRefreshView
 
 
 class RegisterAPIView(APIView):
