@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 export default function ClientTable({ clients, onEdit, onDelete, }) {
+    const navigate = useNavigate();
 
     return (
 
@@ -26,7 +29,8 @@ export default function ClientTable({ clients, onEdit, onDelete, }) {
 
                         <tr
                             key={client.id}
-                            className="border-b border-gray-100 hover:bg-gray-50"
+                            onClick={() => navigate(`/clients/${client.id}`)}
+                            className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
                         >
 
                             <td className="py-4 font-medium">
@@ -50,17 +54,28 @@ export default function ClientTable({ clients, onEdit, onDelete, }) {
 
                             </td>
 
-                            <td>
-                                <button onClick={() => onEdit(client)} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg">
+                            <td className="space-x-2">
+
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onEdit(client);
+                                    }}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg"
+                                >
                                     Edit
                                 </button>
 
                                 <button
-                                    onClick={() => onDelete(client)}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDelete(client);
+                                    }}
                                     className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg"
                                 >
                                     Delete
                                 </button>
+
                             </td>
 
                         </tr>

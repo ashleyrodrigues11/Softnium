@@ -5,15 +5,31 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import Payments from "./pages/Payments";
-
+import ClientProfile from "./pages/ClientProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 
 function App() {
   return (
     <Routes>
 
-      <Route path="/" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route
+        path="/"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+
+      <Route
+        path="/register"
+        element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        }
+      />
 
       <Route
         path="/dashboard"
@@ -40,6 +56,11 @@ function App() {
             <Payments />
           </ProtectedRoute>
         }
+      />
+
+      <Route
+        path="/clients/:id"
+        element={<ClientProfile />}
       />
 
     </Routes>

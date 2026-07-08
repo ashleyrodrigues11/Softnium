@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/SoftNium_Logo.png";
 import { login } from "../services/auth";
+import { Link } from "react-router-dom";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -89,14 +90,17 @@ export default function Login() {
 
                 </form>
 
-                <p className="text-center text-gray-500 mt-6">
-                    Don't have an account?{" "}
-                    <span
-                        onClick={() => navigate("/register")}
-                        className="text-lime-600 font-semibold cursor-pointer"
+                <p className="text-center mt-6">
+
+                    Don't have an account?
+
+                    <Link
+                        to="/register"
+                        className="text-lime-600 ml-2"
                     >
-                        Register
-                    </span>
+                        Register Now
+                    </Link>
+
                 </p>
 
             </div>
