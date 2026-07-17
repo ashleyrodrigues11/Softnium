@@ -1,4 +1,5 @@
 import api from "./api";
+import { setEncryptedToken, clearTokens } from "../utils/storage";
 
 export const login = async (email, password) => {
     const response = await api.post("login/", {
@@ -6,13 +7,12 @@ export const login = async (email, password) => {
         password,
     });
 
-    localStorage.setItem("access", response.data.access);
-    localStorage.setItem("refresh", response.data.refresh);
+    setEncryptedToken("access", response.data.access);
+    setEncryptedToken("refresh", response.data.refresh);
 
     return response.data;
 };
 
 export const logout = () => {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
+    clearTokens();
 };

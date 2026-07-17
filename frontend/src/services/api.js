@@ -1,4 +1,6 @@
 import axios from "axios";
+import { getDecryptedToken, setEncryptedToken, clearTokens } from "../utils/storage";
+import { encryptPayload, decryptPayload } from "../utils/crypto";
 
 const api = axios.create({
     baseURL: "http://127.0.0.1:8000/api/",
@@ -6,10 +8,14 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
 
-    const token = localStorage.getItem("access");
+    const token = getDecryptedToken("access");
 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    if (config.data) {
+        config.data = { payload: encryptPayload(config.data) };
     }
 
     return config;
@@ -17,24 +23,33 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
 
-    (response) => response,
+    (response) => {
+        if (response.data && response.data.payload) {
+            response.data = decryptPayload(response.data.payload);
+        }
+        return response;
+    },
 
     async (error) => {
+        if (error.response?.data?.payload) {
+            error.response.data = decryptPayload(error.response.data.payload);
+        }
 
         const originalRequest = error.config;
 
         if (
             error.response?.status === 401 &&
-            !originalRequest._retry
+            !originalRequest._retry &&
+            !originalRequest.url.includes("login")
         ) {
 
             originalRequest._retry = true;
 
-            const refresh = localStorage.getItem("refresh");
+            const refresh = getDecryptedToken("refresh");
 
             if (!refresh) {
 
-                localStorage.clear();
+                clearTokens();
                 window.location.href = "/";
 
                 return Promise.reject(error);
@@ -45,13 +60,19 @@ api.interceptors.response.use(
                 const response = await axios.post(
                     "http://127.0.0.1:8000/api/token/refresh/",
                     {
-                        refresh: refresh,
+                        payload: encryptPayload({ refresh: refresh })
                     }
                 );
 
-                const newAccess = response.data.access;
+                const data = response.data.payload ? decryptPayload(response.data.payload) : response.data;
 
-                localStorage.setItem("access", newAccess);
+                const newAccess = data.access;
+
+                setEncryptedToken("access", newAccess);
+                
+                if (data.refresh) {
+                    setEncryptedToken("refresh", data.refresh);
+                }
 
                 originalRequest.headers.Authorization =
                     `Bearer ${newAccess}`;
@@ -60,7 +81,7 @@ api.interceptors.response.use(
 
             } catch (err) {
 
-                localStorage.clear();
+                clearTokens();
 
                 window.location.href = "/";
 

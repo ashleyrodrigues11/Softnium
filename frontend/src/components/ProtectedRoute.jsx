@@ -1,10 +1,12 @@
 import { Navigate } from "react-router-dom";
+import { getDecryptedToken } from "../utils/storage";
 
 export default function ProtectedRoute({ children }) {
 
-    const token = localStorage.getItem("access");
+    const accessToken = getDecryptedToken("access");
+    const refreshToken = getDecryptedToken("refresh");
 
-    if (!token) {
+    if (!accessToken && !refreshToken) {
         return <Navigate to="/" replace />;
     }
 
